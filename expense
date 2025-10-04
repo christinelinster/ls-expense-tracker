@@ -64,7 +64,9 @@ class CLI:
         
 
 class ExpenseData:
-
+    def __init__(self):
+        self._setup_schema()
+        
     @contextmanager
     def _database_connect(self):
         connection = psycopg2.connect(dbname='expense_tracker')
@@ -152,6 +154,17 @@ class ExpenseData:
                 cursor.execute("DELETE FROM expenses")
                 print("All expenses have been deleted.")
 
+    def _setup_schema(self):
+        with self._database_connect() as connection:
+            with connection.cursor(cursor_factory=extras.DictCursor) as cursor:
+                cursor.execute("""
+                               SELECT COUNT(*) FROM information_schema.tables
+                               WHERE table_schema = 'public' AND table_name = 'expenses';
+                               """)
+                result = cursor.fetchone()
+                if result['count'] == 0:
+                    with open("schema.sql", "r") as f: 
+                        cursor.execute(f.read())
 
 if __name__ == '__main__':
     cli = CLI()
