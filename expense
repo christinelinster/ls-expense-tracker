@@ -24,7 +24,7 @@ class CLI:
             case 'list':
                 self.application.list_expenses()
             case 'add':
-                if len(arguments) >= 3: 
+                if len(arguments) >= 3:
                     amount, memo = arguments[1], arguments[2]
                     self.application.add_expense(amount, memo)
                 else:
@@ -53,7 +53,7 @@ class CLI:
     def display_help(self):
         print (dedent("""
            An expense recording system
-           
+
            Commands:
            add AMOUNT MEMO [DATE] - record a new expense
            clear - delete all expenses
@@ -61,12 +61,12 @@ class CLI:
            delete NUMBER - remove expense with id NUMBER
            search QUERY - list expenses with a matching memo field
            """).strip("\n"))
-        
+
 
 class ExpenseData:
     def __init__(self):
         self._setup_schema()
-        
+
     @contextmanager
     def _database_connect(self):
         connection = psycopg2.connect(dbname='expense_tracker')
@@ -74,7 +74,7 @@ class ExpenseData:
             with connection:
                 yield connection
 
-        finally: 
+        finally:
             connection.close()
 
     def list_expenses(self):
@@ -93,12 +93,12 @@ class ExpenseData:
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=extras.DictCursor) as cursor:
                 cursor.execute("""
-                                INSERT INTO expenses 
-                                (amount, memo, created_on) 
+                                INSERT INTO expenses
+                                (amount, memo, created_on)
                                 VALUES (%s, %s, %s);
-                                """, 
+                                """,
                                 (amount, memo, date.today()))
-    
+
     def search_expenses(self, keyword):
         with self._database_connect() as connection:
             with connection.cursor(cursor_factory=extras.DictCursor) as cursor:
@@ -116,11 +116,11 @@ class ExpenseData:
         if len(row_count) == 0:
             print('There are no expenses.')
         elif len(row_count) == 1:
-            print('There is 1 expense.') 
+            print('There is 1 expense.')
         else:
             print(f'There are {len(row_count)} expenses.')
-    
-    def _display_total(self, expenses): 
+
+    def _display_total(self, expenses):
         total_amount = sum(expense['amount'] for expense in expenses)
         print('-'*50)
         print(f'Total {str(round(total_amount, 2)).rjust(25)}')
@@ -163,7 +163,7 @@ class ExpenseData:
                                """)
                 result = cursor.fetchone()
                 if result['count'] == 0:
-                    with open("schema.sql", "r") as f: 
+                    with open("schema.sql", "r") as f:
                         cursor.execute(f.read())
 
 if __name__ == '__main__':
