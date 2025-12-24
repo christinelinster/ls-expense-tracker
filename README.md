@@ -2,6 +2,10 @@
 
 A lightweight command-line expense tracking application built with Python and PostgreSQL. Provides a fast, terminal-based interface for logging expenses, searching transactions, and tracking spending.
 
+## 🎥 Quick Demo
+https://github.com/user-attachments/assets/cba9ed1a-5f90-4926-90e5-0d401abb5ae6
+
+
 ## Features
 
 - **Quick Entry** - Add expenses with simple command syntax
